@@ -1,32 +1,53 @@
-#define _GNU_SOURCE
+#include <stddef.h>
 #include <unistd.h>
-#include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
 
-int main(int argc, char **argv)
+int	main(int ac, char **av)
 {
-	if (argc != 2 || !*argv[1])
+	int		i,k,j;
+	char	*buff;
+	int		fd;
+	char	*line;
+
+	if (ac != 2)
 		return (1);
-
-	char buff[1024];
-	char *pat = argv[1];
-	size_t pat_len = strlen(pat);
-	ssize_t byte;
-
-	while ((byte = read(0, buff, 1024)) > 0)
+	buff = malloc(1);
+	if (!buff)
+		return (perror("Error :"), 1);
+	i = 0;
+	while ((fd = read(0, &buff[i], 1)) > 0)
 	{
-		char *curr = buff;
-		char	*match;
-		while ((match = memmem(curr, buff + byte - curr, pat, pat_len)))
+		line = realloc(buff, i + 2);
+		if (!line)
 		{
-			write (1, curr, match - curr);
-			size_t i = 0;
-			while (i++ < pat_len)
-				write (1, "*", 1);
-			curr = match + pat_len;
+			perror("error :");
+			free(buff);
+			return (1);
 		}
-		if (curr < buff +byte)
-			write (1, curr, buff + byte - curr);
+		buff = line;
+		i++;
 	}
-	return (byte < 0);
+	buff[i] = '\0';
+	i = 0;
+	while (buff[i])
+	{
+		while (av[1][i] & buff[i + j] == av[1][j])
+			j++;
+		if (av[1][j] == '\0')
+		{
+			k = 0;
+			while (k < j)
+			{
+				buff[i + k] = '*';
+				k++;
+			}
+			i += j;
+		}
+		else
+			i++;
+	}
+	printf(:%s)
+
 }
