@@ -14,10 +14,14 @@ int	main(int ac, char **av)
 	if(ac != 2)
 		return 1;
 
+	/* reject empty search string */
+	if (av[1][0] == '\0')
+		return 1;
+
 	buf = malloc(1);
 	if(!buf)
 	{
-		perror("Error: ");
+		perror("Error");
 		return 1;
 	}
 	i = 0;
@@ -26,12 +30,18 @@ int	main(int ac, char **av)
 		line = realloc(buf, i + 2);
 		if(!line)
 		{
-			perror("Error: ");
+			perror("Error");
 			free(buf);
 			return 1;
 		}
 		buf = line;
 		i++;
+	}
+	if (fd < 0)
+	{
+		perror("Error");
+		free(buf);
+		return 1;
 	}
 	buf[i] = '\0';
 	i = 0;
